@@ -27,7 +27,7 @@ class Record:
         model = fcn_resnet50(weights=FCN_ResNet50_Weights.COCO_WITH_VOC_LABELS_V1)
         model.eval()
 
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(1)
         self.input_image = None
         self.mask = np.zeros((480, 640), np.uint8)
 
@@ -75,10 +75,11 @@ class Record:
 
             self.points = []
             for item in pts.iterrows():
-                self.points.append([
-                    int(item[1]['xmin']), int(item[1]['ymin']),
-                    int(item[1]['xmax']), int(item[1]['ymax'])
-                ])
+                if item[1]['confidence'] >= 0.5:
+                    self.points.append([
+                        int(item[1]['xmin']), int(item[1]['ymin']),
+                        int(item[1]['xmax']), int(item[1]['ymax'])
+                    ])
 
     def run(self):
         bg = cv2.imread('sample_images/img.png')

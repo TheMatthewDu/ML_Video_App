@@ -16,6 +16,7 @@ class Record:
         self.cap = cv2.VideoCapture(1)
         self.input_image = None
         self.mask = np.zeros((480, 640), np.uint8)
+        self.frames = []
 
         self.running = True
         self.points = []
@@ -51,8 +52,9 @@ class Record:
             self.input_image[dx // 2:img.shape[0] + dx // 2, dy // 2:img.shape[1] + dy // 2, :] = img
 
             output_image = self.input_image
+            self.frames.append(output_image)
 
-            if self.points != []:
+            if self.points:  # != []
                 for point in self.points:
                     cv2.rectangle(output_image, (point[0], point[1]), (point[2], point[3]), (0, 255 * (point[4]), 255 * (1 - point[4])), 5)
 
@@ -60,13 +62,11 @@ class Record:
             cv2.imshow("img", output_image)
 
             if cv2.waitKey(1) == ord('q'):
-                cv2.imwrite('sample_images/out.png', output_image)
                 self.running = False
 
 
 if __name__ == '__main__':
     a = Record()
-
     t2 = Thread(target=a.hands)
     t2.start()
 
